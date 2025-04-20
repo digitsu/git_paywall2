@@ -8,16 +8,23 @@ defmodule GitPaywall2.Application do
   @impl true
   def start(_type, _args) do
     children = [
-      GitPaywall2Web.Telemetry,
+      # Start the Ecto repository
       GitPaywall2.Repo,
-      {DNSCluster, query: Application.get_env(:git_paywall2, :dns_cluster_query) || :ignore},
+
+      # Start the Telemetry supervisor
+      GitPaywall2Web.Telemetry,
+
+      # Start the PubSub system
       {Phoenix.PubSub, name: GitPaywall2.PubSub},
-      # Start the Finch HTTP client for sending emails
+
+      # Start Finch
       {Finch, name: GitPaywall2.Finch},
-      # Start a worker by calling: GitPaywall2.Worker.start_link(arg)
-      # {GitPaywall2.Worker, arg},
-      # Start to serve requests, typically the last entry
+
+      # Start the Endpoint (http/https)
       GitPaywall2Web.Endpoint
+
+      # Start a worker by calling: GitPaywall2.Worker.start_link(arg)
+      # {GitPaywall2.Worker, arg}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

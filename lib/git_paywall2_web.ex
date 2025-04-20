@@ -42,9 +42,8 @@ defmodule GitPaywall2Web do
         formats: [:html, :json],
         layouts: [html: GitPaywall2Web.Layouts]
 
-      use Gettext, backend: GitPaywall2Web.Gettext
-
       import Plug.Conn
+      import GitPaywall2Web.Gettext
 
       unquote(verified_routes())
     end
@@ -82,13 +81,11 @@ defmodule GitPaywall2Web do
 
   defp html_helpers do
     quote do
-      # Translation
-      use Gettext, backend: GitPaywall2Web.Gettext
-
       # HTML escaping functionality
       import Phoenix.HTML
-      # Core UI components
+      # Core UI components and translation
       import GitPaywall2Web.CoreComponents
+      import GitPaywall2Web.Gettext
 
       # Shortcut for generating JS commands
       alias Phoenix.LiveView.JS
@@ -108,7 +105,7 @@ defmodule GitPaywall2Web do
   end
 
   @doc """
-  When used, dispatch to the appropriate controller/live_view/etc.
+  When used, dispatch to the appropriate controller/view/etc.
   """
   defmacro __using__(which) when is_atom(which) do
     apply(__MODULE__, which, [])

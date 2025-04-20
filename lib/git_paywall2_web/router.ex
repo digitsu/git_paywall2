@@ -20,12 +20,21 @@ defmodule GitPaywall2Web.Router do
     get "/", PageController, :home
   end
 
-  # Other scopes may use custom stacks.
-  # scope "/api", GitPaywall2Web do
-  #   pipe_through :api
-  # end
+  # API endpoints
+  scope "/api", GitPaywall2Web do
+    pipe_through :api
 
-  # Enable LiveDashboard and Swoosh mailbox preview in development
+    get "/repos/:repo_id", RepoController, :get
+    get "/repos/:repo_id/clone", RepoController, :clone
+    post "/repos/:repo_id/price", RepoController, :set_price
+  end
+
+  # Git protocol handler
+  scope "/git", GitPaywall2Web do
+    get "/:repo_id", GitController, :serve
+  end
+
+  # Enable LiveDashboard in development
   if Application.compile_env(:git_paywall2, :dev_routes) do
     # If you want to use the LiveDashboard in production, you should put
     # it behind authentication and allow only admins to access it.

@@ -1,37 +1,27 @@
-# This file is responsible for configuring your application
-# and its dependencies with the aid of the Config module.
-#
-# This configuration file is loaded before any dependency and
-# is restricted to this project.
-
-# General application configuration
 import Config
 
-config :git_paywall2,
-  ecto_repos: [GitPaywall2.Repo],
-  generators: [timestamp_type: :utc_datetime]
+config :git_paywall2, GitPaywall2.Repo,
+  database: "git_paywall2_repo",
+  username: "postgres",
+  password: "postgres",
+  hostname: "localhost"
 
-# Configures the endpoint
+config :git_paywall2, ecto_repos: [GitPaywall2.Repo]
+
 config :git_paywall2, GitPaywall2Web.Endpoint,
   url: [host: "localhost"],
-  adapter: Bandit.PhoenixAdapter,
   render_errors: [
     formats: [html: GitPaywall2Web.ErrorHTML, json: GitPaywall2Web.ErrorJSON],
     layout: false
   ],
   pubsub_server: GitPaywall2.PubSub,
-  live_view: [signing_salt: "lqbWTVjr"]
+  live_view: [signing_salt: "aS1SJmfT"]
 
-# Configures the mailer
-#
-# By default it uses the "Local" adapter which stores the emails
-# locally. You can see the emails in your browser, at "/dev/mailbox".
-#
-# For production it's recommended to configure a different adapter
-# at the `config/runtime.exs`.
-config :git_paywall2, GitPaywall2.Mailer, adapter: Swoosh.Adapters.Local
+config :git_paywall2, :bsv,
+  network: :mainnet,
+  explorer_url: "https://api.whatsonchain.com/v1/bsv/main"
 
-# Configure esbuild (the version is required)
+# Configure esbuild
 config :esbuild,
   version: "0.17.11",
   git_paywall2: [
@@ -41,9 +31,9 @@ config :esbuild,
     env: %{"NODE_PATH" => Path.expand("../deps", __DIR__)}
   ]
 
-# Configure tailwind (the version is required)
+# Configure tailwind
 config :tailwind,
-  version: "3.4.3",
+  version: "3.3.2",
   git_paywall2: [
     args: ~w(
       --config=tailwind.config.js
@@ -53,14 +43,14 @@ config :tailwind,
     cd: Path.expand("../assets", __DIR__)
   ]
 
-# Configures Elixir's Logger
-config :logger, :console,
-  format: "$time $metadata[$level] $message\n",
-  metadata: [:request_id]
-
-# Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
-# Import environment specific config. This must remain at the bottom
-# of this file so it overrides the configuration defined above.
+# Optional configuration for config/config.exs
+# This disables Swoosh completely
+
+config :git_paywall2, GitPaywall2.Mailer, adapter: Swoosh.Adapters.Test
+
+# Disable Swoosh
+config :swoosh, :api_client, false
+
 import_config "#{config_env()}.exs"
